@@ -1,5 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import Navbar from '@/components/navigation'
 import { Prompt } from "next/font/google";
 
@@ -30,7 +30,6 @@ export default function RootLayout({ children }) {
       className={`${prompt.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Navbar /> 
         {children}</body>
     </html>
   );
