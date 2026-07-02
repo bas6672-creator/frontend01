@@ -8,8 +8,8 @@ export default function FormRegister() {
   const [form, setForm] = useState({
         txt_firstname: "",
         txt_lastname: "",
-        txt_password:'',
-        txt_uesername:""
+        txt_uesername:"",
+        txt_password:""
    });
 
   const handleChange = (e) => {
@@ -24,7 +24,7 @@ export default function FormRegister() {
     alert("บันทึกสำเร็จ");
     console.log(form.txt_firstname);
     console.log(form.txt_lastname)
-    console.log(form.txt_uesername)
+    console.log(form.txt_usersname)
     console.log(form.txt_password)
   }
 
@@ -48,10 +48,9 @@ export default function FormRegister() {
         <label className="text-black">กรุณาระบุนามสกุล {form.txt_lastname}</label>
         <input type="text" name="txt_lastname" defaultValue={form.txt_lastname} onChange={handleChange} className='w-full border text-black border-black rounded-md px-4 py-2' placeholder='lastname' />
 
-        <label className="text-black">uesername {form.txt_uesername}</label>
-        <input type="text" name="txt_uesername" defaultValue={form.txt_uesername} onChange={handleChange} className='w-full border text-black border-black rounded-md px-4 py-2' placeholder='uesername' />
-
-         
+        <label className="text-black">usersname {form.txt_usersname}</label>
+        <input type="text" name="txt_usersname" defaultValue={form.txt_usersname} onChange={handleChange} className='w-full border text-black border-black rounded-md px-4 py-2' placeholder='usersname' />
+        
         <label className="text-black">password {form.txt_password}</label>
         <input type="password" name="txt_password" defaultValue={form.txt_password} onChange={handleChange} className='w-full border text-black border-black rounded-md px-4 py-2' placeholder='password' />
 
