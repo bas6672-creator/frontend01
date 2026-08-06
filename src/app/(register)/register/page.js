@@ -23,8 +23,8 @@ export default function FormRegister() {
     e.preventDefault();
     alert("บันทึกสำเร็จ");
     console.log(form.txt_firstname);
-    console.log(form.txt_lastname)
-    console.log(form.txt_usersname)
+    console.log(form.txt_lastname);
+    console.log(form.txt_usersname);
     console.log(form.txt_password)
   }
 
