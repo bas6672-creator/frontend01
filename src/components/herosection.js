@@ -16,15 +16,14 @@ export default function Herosection() {
             </span>
 
             <h1 className="mt-6 text-4xl font-extrabold leading-tight text-white md:text-6xl">
-              สร้างอนาคตด้วย
+              ซื้อขายไอดีเกม
               <span className="block text-yellow-300">
-                เทคโนโลยีและนวัตกรรม
+                สะดวกรวดเร็วทันใจ
               </span>
             </h1>
 
             <p className="mt-6 text-lg text-blue-100">
-              พัฒนาเว็บไซต์ แอปพลิเคชัน และระบบสารสนเทศ
-              ด้วยเทคโนโลยีสมัยใหม่ เพื่อยกระดับองค์กรของคุณ
+             ราคาถูกเเละปลอดภัย
             </p>
 
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
@@ -50,13 +49,13 @@ export default function Herosection() {
               <div className="absolute inset-0 animate-pulse rounded-full bg-white/20 blur-3xl"></div>
 
               <img
-                src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900"
+                src="1029.jpg"
                 alt="Technology"
                 className="relative w-full max-w-lg rounded-3xl shadow-2xl"
               />
             </div>
           </div>
-
+  
         </div>
       </div>
     </section>
