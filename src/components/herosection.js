@@ -23,7 +23,7 @@ export default function Herosection() {
             </h1>
 
             <p className="mt-6 text-lg text-blue-100">
-             ราคาถูกเเละปลอดภัย
+             ราคาถูกเเละปลอดภัย มั่นใจ 100%
             </p>
 
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">

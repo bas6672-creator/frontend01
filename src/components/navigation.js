@@ -58,7 +58,7 @@ export default function Navigation() {
                   I Bas Shop
                 </h1>
                 <p className={`text-[11px] font-medium uppercase tracking-wider transition-colors duration-300 ${isScrolled ? 'text-gray-500' : 'text-gray-300'}`}>
-                  E-Commerce
+                  ขายไอดีราคาถูก
                 </p>
               </div>
             </Link>
