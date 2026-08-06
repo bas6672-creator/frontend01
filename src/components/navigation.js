@@ -55,7 +55,7 @@ export default function Navigation() {
               <div className="flex flex-col">
                 {/* 🛠️ เปลี่ยนสีข้อความโลโก้ตาม isScrolled */}
                 <h1 className={`text-xl font-extrabold tracking-tight transition-colors duration-300 ${textColor}`}>
-                  NextShop
+                  I Bas Shop
                 </h1>
                 <p className={`text-[11px] font-medium uppercase tracking-wider transition-colors duration-300 ${isScrolled ? 'text-gray-500' : 'text-gray-300'}`}>
                   E-Commerce
