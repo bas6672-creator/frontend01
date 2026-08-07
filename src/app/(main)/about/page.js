@@ -1,7 +1,14 @@
 import React from 'react'
+import Herosectionabout from '@/components/herosectionabout'
+import Cardsectionabout from '@/components/Cardsectionabout'
+import Footersection from '@/components/Footersection'
 
-export default function About() {
+export default function Home() {
   return (
-    <div><center>About Page</center></div>
+    <div>
+    <Herosectionabout />
+    <Cardsectionabout />
+    <Footersection />
+    </div>
   )
 }

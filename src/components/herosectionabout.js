@@ -16,14 +16,14 @@ export default function Herosection() {
             </span>
 
             <h1 className="mt-6 text-4xl font-extrabold leading-tight text-white md:text-6xl">
-              ซื้อขายไอดีเกม
+              เกี่ยวกับ I Bas Shop
               <span className="block text-yellow-300">
-                สะดวกรวดเร็วทันใจ
+                ร้านจำหน่ายไอดีเกมคุณภาพ พร้อมบริการที่รวดเร็ว ปลอดภัย และเชื่อถือได้
               </span>
             </h1>
 
             <p className="mt-6 text-lg text-blue-100">
-             ราคาถูกเเละปลอดภัย มั่นใจ 100%
+             เราคัดเลือกไอดีทุกบัญชี ตรวจสอบก่อนจำหน่าย และพร้อมดูแลลูกค้าทั้งก่อนและหลังการขาย
             </p>
 
             <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
@@ -31,7 +31,7 @@ export default function Herosection() {
                 href="/about"
                 className="rounded-xl bg-white px-6 py-3 font-semibold text-blue-700 shadow-lg transition hover:scale-105"
               >
-                เรียนรู้เพิ่มเติม
+                เลือกซื้อสินค้า
               </Link>
 
               <Link

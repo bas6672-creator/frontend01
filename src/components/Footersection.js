@@ -8,11 +8,11 @@ export default function Footersection() {
          
           {/* ==================== ส่วนที่ 1: ข้อมูลร้านค้า ==================== */}
           <div>
-            <h2 className="text-white text-xl font-bold mb-4">NextShop</h2>
+            <h2 className="text-white text-xl font-bold mb-4">I Bas Shop</h2>
             <p className="text-sm leading-relaxed mb-4">
-              แหล่งรวมสินค้าไอทีและแก็ดเจ็ตที่ทันสมัยที่สุด
-              คัดสรรสินค้าคุณภาพเพื่อตอบโจทย์ทุกไลฟ์สไตล์ของคุณ
-              พร้อมบริการจัดส่งทั่วประเทศ
+              ซื้อขายไอดีเกม
+              สะดวกรวดเร็วทันใจ
+              ราคาถูกเเละปลอดภัย มั่นใจ 100%
             </p>
           </div>
 
