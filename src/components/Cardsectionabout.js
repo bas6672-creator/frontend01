@@ -50,7 +50,7 @@ export default function Cardsection() {
             </div>
             <div className="p-4">
               <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
-                💬บริการตลอด
+                💬บริการตลอดเวลา
               </h3>
               <p className="text-sm text-gray-500 mt-1 line-clamp-2">
                 ตอบแชทรวดเร็ว พร้อมช่วยเหลือ
