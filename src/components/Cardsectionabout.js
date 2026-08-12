@@ -17,8 +17,6 @@ export default function Cardsection() {
           {/* ==================== การ์ดใบที่ 1 ==================== */}
           <div className="border rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 bg-white">
             <div className="relative w-full h-48 bg-gray-100">
-              <Image
-              />
             </div>
             <div className="p-4">
               <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">

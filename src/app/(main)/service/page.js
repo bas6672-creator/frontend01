@@ -1,9 +1,14 @@
 import React from 'react'
+import Herosectionservice from '@/components/herosectionservice'
+import Cardsectionservice from '@/components/Cardsectionservice'
+import Footersection from '@/components/Footersection'
 
-export default function Service() {
+export default function Home() {
   return (
     <div>
-      <center>Service Page</center>
+    <Herosectionservice />
+    <Cardsectionservice />
+    <Footersection />
     </div>
   )
 }
