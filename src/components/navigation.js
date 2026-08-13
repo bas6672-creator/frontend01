@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import LoginModal from './LoginModal'
+import { register } from 'next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup'
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
@@ -69,7 +70,8 @@ export default function Navigation() {
               {/* Desktop Menu Items */}
               <div className="hidden md:flex items-center gap-1 mr-4">
                 {menuItems.map((item) => (
-                  <Link
+                  <Link 
+
                     key={item.name}
                     href={item.href}
                     // 🛠️ เปลี่ยนสีข้อความเมนู และเอฟเฟกต์ตอน hover
@@ -96,8 +98,8 @@ export default function Navigation() {
 
               {/* Login Button (Desktop) */}
               <div className="hidden md:block">
-                <button
-                  onClick={() => setIsLoginModalOpen(true)}
+                <Link
+                  href="/register"
                   // 🛠️ สลับสีปุ่ม Login ให้ตรงข้ามกับพื้นหลังเสมอ
                   className={`inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 ${
                     isScrolled
@@ -106,7 +108,7 @@ export default function Navigation() {
                   }`}
                 >
                   เข้าสู่ระบบ
-                </button>
+                </Link>
               </div>
 
               {/* Mobile Menu Button */}
