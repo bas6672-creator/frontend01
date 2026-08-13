@@ -10,6 +10,10 @@ export default function UsersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
+  // State สำหรับการแบ่งหน้า (Pagination)
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10; // แสดง 10 คนต่อหน้า
+
   useEffect(() => {
     fetchUsers();
   }, []);
@@ -22,6 +26,7 @@ export default function UsersPage() {
       if (!response.ok) throw new Error(`Status ${response.status}`);
       const data = await response.json();
       setUsers(data);
+      setCurrentPage(1); // รีเซ็ตกลับไปหน้า 1 เมื่อโหลดข้อมูลใหม่
     } catch (error) {
       setIsError(true);
       await Swal.fire({
@@ -34,6 +39,12 @@ export default function UsersPage() {
       setIsLoading(false);
     }
   };
+
+  // คำนวณข้อมูลที่จะแสดงในหน้าปัจจุบัน
+  const totalPages = Math.ceil(users.length / itemsPerPage);
+  const indexOfLastUser = currentPage * itemsPerPage;
+  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
 
   // ฟังก์ชันลบข้อมูล
   const handleDelete = async (id) => {
@@ -59,7 +70,7 @@ export default function UsersPage() {
             timer: 1500,
             showConfirmButton: false,
           });
-          fetchUsers(); // โหลดข้อมูลใหม่
+          fetchUsers();
         }
       } catch (error) {
         Swal.fire({
@@ -71,7 +82,7 @@ export default function UsersPage() {
     }
   };
 
-  // ฟังก์ชันแก้ไข (แสดง SweetAlert แจ้งเตือนเบื้องต้น)
+  // ฟังก์ชันแก้ไข
   const handleEdit = (id) => {
     Swal.fire({
       icon: "info",
@@ -92,7 +103,7 @@ export default function UsersPage() {
               <span>👥</span> รายชื่อสมาชิกในระบบ
             </h1>
             <p className="text-slate-400 text-sm mt-1">
-              จัดการและตรวจสอบข้อมูลผู้ใช้งานทั้งหมด
+              จัดการและตรวจสอบข้อมูลผู้ใช้งานทั้งหมด (แสดง 10 คน/หน้า)
             </p>
           </div>
 
@@ -140,7 +151,7 @@ export default function UsersPage() {
         {/* State 4: Data Content */}
         {!isLoading && !isError && users.length > 0 && (
           <>
-            {/* Desktop View: ตารางแบบหรูหรา */}
+            {/* Desktop View: ตาราง */}
             <div className="hidden md:block overflow-hidden rounded-2xl border border-indigo-500/20 bg-[#1e153b]/80 backdrop-blur-md shadow-2xl">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -153,9 +164,11 @@ export default function UsersPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-indigo-500/10 text-sm text-slate-200">
-                  {users.map((user, index) => (
+                  {currentUsers.map((user, index) => (
                     <tr key={user.id || index} className="hover:bg-indigo-500/10 transition-colors">
-                      <td className="p-4 text-center font-medium text-slate-400">{index + 1}</td>
+                      <td className="p-4 text-center font-medium text-slate-400">
+                        {indexOfFirstUser + index + 1}
+                      </td>
                       <td className="p-4 font-semibold text-white">{user.firstname}</td>
                       <td className="p-4">{user.lastname}</td>
                       <td className="p-4">
@@ -185,16 +198,16 @@ export default function UsersPage() {
               </table>
             </div>
 
-            {/* Mobile View: การ์ดแสดงผลสำหรับมือถือ */}
+            {/* Mobile View: การ์ด */}
             <div className="grid grid-cols-1 gap-4 md:hidden">
-              {users.map((user, index) => (
+              {currentUsers.map((user, index) => (
                 <div
                   key={user.id || index}
                   className="bg-[#1e153b]/90 border border-indigo-500/20 rounded-2xl p-5 shadow-lg flex flex-col gap-3"
                 >
                   <div className="flex justify-between items-start border-b border-indigo-500/10 pb-3">
                     <span className="text-xs font-bold px-2.5 py-1 bg-indigo-500/20 text-indigo-300 rounded-md">
-                      ลำดับที่ #{index + 1}
+                      ลำดับที่ #{indexOfFirstUser + index + 1}
                     </span>
                     <span className="text-xs text-indigo-300 bg-slate-800 px-2 py-1 rounded-lg border border-indigo-500/20">
                       @{user.username}
@@ -225,6 +238,56 @@ export default function UsersPage() {
                 </div>
               ))}
             </div>
+
+            {/* ==================== PAGINATION BAR (แถบเปลี่ยนหน้า) ==================== */}
+            {totalPages > 1 && (
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 bg-[#1e153b]/60 border border-indigo-500/20 p-4 rounded-2xl">
+                <p className="text-sm text-slate-400">
+                  แสดงลำดับที่ <span className="text-indigo-400 font-semibold">{indexOfFirstUser + 1}</span> ถึง{" "}
+                  <span className="text-indigo-400 font-semibold">
+                    {Math.min(indexOfLastUser, users.length)}
+                  </span>{" "}
+                  จากทั้งหมด <span className="text-indigo-400 font-semibold">{users.length}</span> คน
+                </p>
+
+                <div className="flex items-center gap-2">
+                  {/* ปุ่มย้อนกลับ */}
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-950/80 border border-indigo-500/30 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-indigo-600 transition-all"
+                  >
+                    ◀ ก่อนหน้า
+                  </button>
+
+                  {/* เลขหน้า */}
+                  <div className="flex gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
+                          currentPage === page
+                            ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30"
+                            : "bg-indigo-950/40 text-slate-400 border border-indigo-500/20 hover:bg-indigo-500/20 hover:text-white"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* ปุ่มถัดไป */}
+                  <button
+                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-950/80 border border-indigo-500/30 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-indigo-600 transition-all"
+                  >
+                    ถัดไป ▶
+                  </button>
+                </div>
+              </div>
+            )}
           </>
         )}
 
