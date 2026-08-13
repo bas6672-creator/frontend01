@@ -98,7 +98,7 @@ export default function LoginModal({ isOpen, onClose }) {
         {/* Logo M */}
         <div className="mb-6 flex justify-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#4f50a2] text-3xl font-extrabold text-white shadow-md">
-            M
+            BAS
           </div>
         </div>
 
