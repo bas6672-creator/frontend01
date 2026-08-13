@@ -1,17 +1,16 @@
 "use client";
 
-import React from 'react'
-import { useState } from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import Swal from "sweetalert2";
 
 export default function FormRegister() {
-
   const [form, setForm] = useState({
-        txt_firstname: "",
-        txt_lastname: "",
-        txt_username: "",
-        txt_password:""
-   });
+    txt_firstname: "",
+    txt_lastname: "",
+    txt_username: "",
+    txt_password: "",
+  });
 
   const handleChange = (e) => {
     setForm({
@@ -20,16 +19,14 @@ export default function FormRegister() {
     });
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    //console.log(form);
     try {
       const response = await fetch("https://api.itdev.cmtc.ac.th/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-        },  
+        },
         body: JSON.stringify({
           firstname: form.txt_firstname,
           lastname: form.txt_lastname,
@@ -38,79 +35,146 @@ export default function FormRegister() {
         }),
       });
 
-      const result = await response.json();
-
       if (response.ok) {
-        // สำเร็จ (Status 201)
-        await Swal.fire({
+        Swal.fire({
           icon: "success",
-          title: 'บันทึกสำเร็จ (status: ${response.status})',
-          text: "เพิ่มข้อมูลผู้ใช้เรียบร้อยแล้ว",
-          confirmButtonText: "ตกลง",
-          confirmButtonColor: "#2E75B6",
+          title: "สมัครสมาชิกสำเร็จ",
+          showConfirmButton: false,
+          timer: 1500,
         });
-      } else if (response.status === 400) {
-        // Validation Error
-        await Swal.fire({
-          icon: "warning",
-          title: 'ข้อมูลไม่ถูกต้อง (status: ${response.status})',
-          text: result.message || "เกิดข้อผิดผลาด",
-          confirmButtonText: "ตกลง",
-          confirmButtonColor: "#fecc00",
-        });
-      } else if (response.status >= 500) {
-        // Server Error
-        await Swal.fire({
+      } else {
+        Swal.fire({
           icon: "error",
-          title: 'เกิดข้อผิดพลาดที่เซิฟเวอร์ (status: ${response.status})',
-          text: result.message || "เกิดข้อผิดผลาด",
-          confirmButtonText: "ตกลง",
-          confirmButtonColor: "#fe0505",
+          title: "เกิดข้อผิดพลาด",
+          text: "ไม่สามารถบันทึกข้อมูลได้",
         });
       }
-
     } catch (error) {
-      // เข้ามาที่นี่เฉพาะตอน  "เรียก fetch ไม่สำเร็จเลย" เช่น  ไม่มีอินเตอร์เน็ต
-      await Swal.fire({
-        icon: "warning",
-        title: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
-        text: "กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต แล้วลองใหม่อีกครั้ง",
-        confirmButtonText: "ตกลง",
-        confirmButtonColor: "#fe0505",
+      console.error("Error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
       });
     }
-
-  }
+  };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-md border">
-       
-        {/* Header */}
-        <div className="border-b px-6 py-4">
-          <h1 className="text-2xl font-bold text-gray-800">
-            ฟอร์มสมัครสมาชิก
-          </h1>
+    <div className="flex min-h-screen items-center justify-center bg-gray-900 p-4">
+      {/* Card Container */}
+      <div className="relative w-full max-w-md rounded-3xl bg-[#e4ebed] p-8 shadow-2xl">
+        
+        {/* ปุ่มปิด (X) */}
+        <Link
+          href="/"
+          className="absolute right-6 top-6 text-gray-500 hover:text-gray-800 transition-colors"
+        >
+          <svg
+            className="h-6 w-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </Link>
+
+        {/* Logo Icon 'M' */}
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#4f50a2] text-3xl font-extrabold text-white shadow-md">
+            M
+          </div>
         </div>
 
-      <form onSubmit={handleSubmit} className='p-6 space-y-5'>
+        {/* หัวข้อ */}
+        <div className="mb-6 text-center">
+          <h1 className="text-2xl font-bold text-gray-800">สร้างบัญชีใหม่</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            เข้าร่วมเป็นส่วนหนึ่งกับเรา เพื่อรับสิทธิพิเศษมากมาย
+          </p>
+        </div>
 
-        <label className="text-black">กรุณาระบุชื่อ </label>
-        <input type="text" name="txt_firstname" defaultValue={""} onChange={handleChange} className='w-full border text-black border-black rounded-md px-4 py-2' placeholder='firstname' />
+        {/* ฟอร์มสมัครสมาชิก */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* แถว ชื่อ - นามสกุล */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                ชื่อ
+              </label>
+              <input
+                type="text"
+                name="txt_firstname"
+                value={form.txt_firstname}
+                onChange={handleChange}
+                placeholder="ชื่อจริง"
+                required
+                className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                นามสกุล
+              </label>
+              <input
+                type="text"
+                name="txt_lastname"
+                value={form.txt_lastname}
+                onChange={handleChange}
+                placeholder="นามสกุล"
+                required
+                className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
+              />
+            </div>
+          </div>
 
-        <label className="text-black">กรุณาระบุนามสกุล </label>
-        <input type="text" name="txt_lastname" defaultValue={""} onChange={handleChange} className='w-full border text-black border-black rounded-md px-4 py-2' placeholder='lastname' />
+          {/* ช่อง อีเมล / Username */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              อีเมล
+            </label>
+            <input
+              type="text"
+              name="txt_username"
+              value={form.txt_username}
+              onChange={handleChange}
+              placeholder="name@example.com"
+              required
+              className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
+            />
+          </div>
 
-        <label className="text-black">username </label>
-        <input type="text" name="txt_username" defaultValue={""} onChange={handleChange} className='w-full border text-black border-black rounded-md px-4 py-2' placeholder='username' />
+          {/* ช่อง รหัสผ่าน */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              รหัสผ่าน
+            </label>
+            <input
+              type="password"
+              name="txt_password"
+              value={form.txt_password}
+              onChange={handleChange}
+              placeholder="••••••••"
+              required
+              className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
+            />
+          </div>
 
-        <label className="text-black">password </label>
-        <input type="password" name="txt_password" defaultValue={""} onChange={handleChange} className='w-full border text-black border-black rounded-md px-4 py-2' placeholder='password' />
+          {/* ปุ่ม สมัครสมาชิก */}
+          <button
+            type="submit"
+            className="mt-4 w-full rounded-xl bg-[#403838] py-3.5 text-sm font-semibold text-white shadow-md hover:bg-[#2b2525] transition-all"
+          >
+            สมัครสมาชิก
+          </button>
+        </form>
 
-
-        <button type="submit" className="px-5 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">บันทึกข้อมูล</button>
-      </form>
+      </div>
     </div>
-    </div>
-  )
+  );
 }

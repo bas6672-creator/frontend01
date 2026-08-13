@@ -1,187 +1,236 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import React, { useState } from "react";
+import Swal from "sweetalert2";
 
 export default function LoginModal({ isOpen, onClose }) {
-  // 1. State ควบคุมโหมด (True = Login, False = Register)
-  const [isLoginMode, setIsLoginMode] = useState(true)
+  // state สำหรับสลับโหมดหน้า Login และ Register
+  const [isRegister, setIsRegister] = useState(false);
 
-  // 2. State สำหรับเก็บข้อมูลฟอร์ม
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  // state เก็บข้อมูลฟอร์ม Register (เปลี่ยน email เป็น username)
+  const [registerForm, setRegisterForm] = useState({
+    firstname: "",
+    lastname: "",
+    username: "",
+    password: "",
+  });
 
-  // 3. รีเซ็ตฟอร์มกลับเป็นหน้า Login เสมอ เมื่อเปิด Modal ขึ้นมาใหม่
-  useEffect(() => {
-    if (isOpen) {
-      setIsLoginMode(true)
-      setFirstName('')
-      setLastName('')
-      setEmail('')
-      setPassword('')
+  if (!isOpen) return null;
+
+  // ฟังก์ชันจัดการการพิมพ์ข้อมูล
+  const handleRegisterChange = (e) => {
+    setRegisterForm({
+      ...registerForm,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // ฟังก์ชันส่งข้อมูลสมัครสมาชิกไปยัง API
+  const handleRegisterSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("https://api.itdev.cmtc.ac.th/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstname: registerForm.firstname,
+          lastname: registerForm.lastname,
+          username: registerForm.username, // ส่ง username ไปยัง API
+          password: registerForm.password,
+        }),
+      });
+
+      if (response.ok) {
+        // 1. แจ้งเตือนสำเร็จ
+        Swal.fire({
+          icon: "success",
+          title: "สมัครสมาชิกสำเร็จ!",
+          text: "ข้อมูลถูกบันทึกเรียบร้อยแล้ว",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // 2. ล้างข้อมูลในฟอร์ม
+        setRegisterForm({
+          firstname: "",
+          lastname: "",
+          username: "",
+          password: "",
+        });
+
+        // 3. สลับกลับมาหน้า Login
+        setIsRegister(false);
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "เกิดข้อผิดพลาด",
+          text: "ไม่สามารถบันทึกข้อมูลได้ โปรดลองอีกครั้ง",
+        });
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Swal.fire({
+        icon: "error",
+        title: "เกิดข้อผิดพลาด",
+        text: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้",
+      });
     }
-  }, [isOpen])
-
-  if (!isOpen) return null
-
-  // 4. ฟังก์ชันจัดการเมื่อกดปุ่ม Submit
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (isLoginMode) {
-      console.log('เข้าสู่ระบบด้วย:', { email, password })
-      // Logic เข้าสู่ระบบ
-    } else {
-      console.log('สมัครสมาชิกด้วย:', { firstName, lastName, email, password })
-      // Logic สมัครสมาชิก
-    }
-  }
+  };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/40 backdrop-blur-sm p-4">
-     
-      {/* กล่อง Modal */}
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 transform transition-all animate-in fade-in zoom-in-95 duration-200">
-       
-        {/* ปุ่มปิด Modal */}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+      <div className="relative w-full max-w-md rounded-3xl bg-[#e4ebed] p-8 shadow-2xl">
+        
+        {/* ปุ่มปิด Modal (X) */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
+          type="button"
+          className="absolute right-6 top-6 text-gray-500 hover:text-gray-800 transition-colors"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        {/* ส่วนหัว (Header & Logo) เปลี่ยนข้อความตามโหมด */}
-        <div className="text-center mb-8 mt-2">
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white font-bold text-xl shadow-lg shadow-indigo-500/30 mb-4">
+        {/* Logo M */}
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#4f50a2] text-3xl font-extrabold text-white shadow-md">
             M
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
-            {isLoginMode ? 'ยินดีต้อนรับกลับมา' : 'สร้างบัญชีใหม่'}
-          </h2>
-          <p className="mt-2 text-sm text-gray-500">
-            {isLoginMode
-              ? 'กรุณากรอกข้อมูลเพื่อเข้าสู่ระบบบัญชีของคุณ'
-              : 'เข้าร่วมเป็นส่วนหนึ่งกับเรา เพื่อรับสิทธิพิเศษมากมาย'}
-          </p>
         </div>
 
-        {/* ฟอร์ม */}
-        <form onSubmit={handleSubmit} className="space-y-5">
-         
-          {/* ================= ส่วนที่เพิ่มมาเฉพาะหน้า Register ================= */}
-          {!isLoginMode && (
-            <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
+        {isRegister ? (
+          /* ==================== ฟอร์มสมัครสมาชิก (REGISTER) ==================== */
+          <>
+            <div className="mb-6 text-center">
+              <h2 className="text-2xl font-bold text-gray-800">สร้างบัญชีใหม่</h2>
+              <p className="mt-1 text-sm text-gray-500">เข้าร่วมเป็นส่วนหนึ่งกับเรา เพื่อรับสิทธิพิเศษมากมาย</p>
+            </div>
+
+            <form onSubmit={handleRegisterSubmit} className="space-y-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อ</label>
+                  <input
+                    type="text"
+                    name="firstname"
+                    value={registerForm.firstname}
+                    onChange={handleRegisterChange}
+                    placeholder="ชื่อจริง"
+                    required
+                    className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">นามสกุล</label>
+                  <input
+                    type="text"
+                    name="lastname"
+                    value={registerForm.lastname}
+                    onChange={handleRegisterChange}
+                    placeholder="นามสกุล"
+                    required
+                    className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
+                  />
+                </div>
+              </div>
+
+              {/* ปรับแก้ช่องนี้เป็น Username */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  ชื่อ
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้ (Username)</label>
                 <input
                   type="text"
+                  name="username"
+                  value={registerForm.username}
+                  onChange={handleRegisterChange}
+                  placeholder="username"
                   required
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors"
-                  placeholder="ชื่อจริง"
+                  className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={registerForm.password}
+                  onChange={handleRegisterChange}
+                  placeholder="••••••••"
+                  required
+                  className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="mt-4 w-full rounded-xl bg-[#403838] py-3.5 text-sm font-semibold text-white shadow-md hover:bg-[#2b2525] transition-all cursor-pointer"
+              >
+                สมัครสมาชิก
+              </button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-gray-600">
+              มีบัญชีอยู่แล้ว?{" "}
+              <button
+                type="button"
+                onClick={() => setIsRegister(false)}
+                className="font-semibold text-[#4f50a2] hover:underline cursor-pointer"
+              >
+                เข้าสู่ระบบ
+              </button>
+            </p>
+          </>
+        ) : (
+          /* ==================== ฟอร์มเข้าสู่ระบบ (LOGIN) ==================== */
+          <>
+            <div className="mb-6 text-center">
+              <h2 className="text-2xl font-bold text-gray-800">ยินดีต้อนรับกลับมา</h2>
+              <p className="mt-1 text-sm text-gray-500">กรุณากรอกข้อมูลเพื่อเข้าสู่ระบบบัญชีของคุณ</p>
+            </div>
+
+            <form className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้ (Username)</label>
+                <input
+                  type="text"
+                  placeholder="username"
+                  className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  นามสกุล
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน</label>
                 <input
-                  type="text"
-                  required
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors"
-                  placeholder="นามสกุล"
+                  type="password"
+                  placeholder="••••••••"
+                  className="w-full rounded-xl border-none bg-white px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#4f50a2]"
                 />
               </div>
-            </div>
-          )}
-          {/* ================================================================= */}
+              <button
+                type="submit"
+                className="mt-2 w-full rounded-xl bg-[#0f172a] py-3.5 text-sm font-semibold text-white transition-all cursor-pointer"
+              >
+                เข้าสู่ระบบ
+              </button>
+            </form>
 
-          {/* อีเมล (ใช้ร่วมกันทั้ง Login และ Register) */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              อีเมล
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors"
-              placeholder="name@example.com"
-            />
-          </div>
+            <p className="mt-6 text-center text-sm text-gray-600">
+              ยังไม่มีบัญชีใช่ไหม?{" "}
+              <button
+                type="button"
+                onClick={() => setIsRegister(true)}
+                className="font-semibold text-[#4f50a2] hover:underline cursor-pointer"
+              >
+                สมัครสมาชิกเลย
+              </button>
+            </p>
+          </>
+        )}
 
-          {/* รหัสผ่าน (ใช้ร่วมกันทั้ง Login และ Register) */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium text-gray-700">
-                รหัสผ่าน
-              </label>
-              {isLoginMode && (
-                <Link
-                  href="/forgot-password"
-                  className="text-xs font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
-                  onClick={onClose}
-                >
-                  ลืมรหัสผ่าน?
-                </Link>
-              )}
-            </div>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors"
-              placeholder="••••••••"
-            />
-          </div>
-
-          {/* ปุ่ม Submit เปลี่ยนข้อความตามโหมด */}
-          <button
-            type="submit"
-            className="w-full flex justify-center py-3.5 px-4 mt-2 border border-transparent rounded-xl shadow-md text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 transition-all hover:-translate-y-0.5 active:translate-y-0"
-          >
-            {isLoginMode ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก'}
-          </button>
-        </form>
-
-        {/* ตัวคั่น (Divider) */}
-        <div className="mt-6 mb-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200" />
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-gray-500">หรือ</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ส่วนปุ่มสลับโหมด (Toggle) */}
-        <div className="text-center">
-          <p className="text-sm text-gray-600">
-            {isLoginMode ? 'ยังไม่มีบัญชีใช่ไหม? ' : 'มีบัญชีอยู่แล้วใช่ไหม? '}
-            <button
-              type="button"
-              onClick={() => setIsLoginMode(!isLoginMode)}
-              className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors relative after:absolute after:-bottom-0.5 after:left-0 after:h-[1px] after:w-0 after:bg-indigo-600 after:transition-all hover:after:w-full"
-            >
-              {isLoginMode ? 'สมัครสมาชิกเลย' : 'เข้าสู่ระบบ'}
-            </button>
-          </p>
-        </div>
-       
       </div>
     </div>
-  )
+  );
 }

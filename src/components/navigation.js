@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import LoginModal from './LoginModal'
 import { register } from 'next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup'
+
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
@@ -98,19 +99,17 @@ export default function Navigation() {
 
               {/* Login Button (Desktop) */}
               <div className="hidden md:block">
-                <Link
-                  href="/register"
-                  // 🛠️ สลับสีปุ่ม Login ให้ตรงข้ามกับพื้นหลังเสมอ
+                <button
+                  onClick={() => setIsLoginModalOpen(true)}
                   className={`inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 ${
-                    isScrolled
-                      ? 'bg-gray-900 text-white hover:bg-gray-800 shadow-md'
-                      : 'bg-white text-gray-900 hover:bg-gray-100 shadow-sm'
-                  }`}
-                >
-                  เข้าสู่ระบบ
-                </Link>
-              </div>
-
+                  isScrolled
+                  ? 'bg-gray-900 text-white hover:bg-gray-800 shadow-md'
+                  : 'bg-white text-gray-900 hover:bg-gray-100 shadow-sm'
+               }`}
+             >
+            เข้าสู่ระบบ
+              </button> 
+            </div>
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
