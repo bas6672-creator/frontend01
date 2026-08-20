@@ -8,11 +8,21 @@ const API_URL = "https://api.itdev.cmtc.ac.th/users";
 
 export default function UsersPage() {
   const router = useRouter();
+  
+  // 1. กำหนด state เช็ค login ไว้ภายใน Component
+  const [isAuth, setIsAuth] = useState(false);
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
+  // 2. แก้ไข useEffect เช็ค token และดึงข้อมูล (ลบ useEffect ตัวซ้ำออก)
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+    setIsAuth(true);
     fetchUsers();
   }, []);
 
@@ -87,6 +97,9 @@ export default function UsersPage() {
     }
   };
 
+  // 3. เช็คค่า login (ถ้ายังไม่ยืนยันตัวตนจะไม่แสดง UI ใดๆ ป้องกัน UI กระพริบก่อน Redirect)
+  if (!isAuth) return null;
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0d131d]">
@@ -101,16 +114,14 @@ export default function UsersPage() {
   if (isError) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0d131d]">
-        <p className="text-red-400 font-medium">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>
+        <p className="font-medium text-red-400">เกิดข้อผิดพลาดในการโหลดข้อมูล</p>
       </div>
     );
   }
 
   return (
-    // เพิ่ม pt-24 (หรือ pt-28) เพื่อเว้นระยะจาก Navbar ลงมา
     <div className="min-h-screen bg-[#0d131d] px-4 pb-8 pt-24 text-slate-200 md:px-8 md:pt-28">
       <div className="mx-auto max-w-6xl">
-        {/* Header Section */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-white">รายชื่อสมาชิก</h1>
@@ -121,21 +132,21 @@ export default function UsersPage() {
         </div>
 
         {users.length === 0 ? (
-          <div className="rounded-2xl bg-[#121926] p-12 text-center shadow-lg border border-[#1e293b]">
+          <div className="rounded-2xl border border-[#1e293b] bg-[#121926] p-12 text-center shadow-lg">
             <p className="text-slate-400">ยังไม่มีข้อมูลสมาชิกในระบบ</p>
           </div>
         ) : (
           <>
             {/* Desktop View: Table */}
-            <div className="hidden md:block overflow-hidden rounded-2xl border border-[#1e293b] bg-[#121926] shadow-xl">
+            <div className="hidden overflow-hidden rounded-2xl border border-[#1e293b] bg-[#121926] shadow-xl md:block">
               <table className="w-full text-left text-sm text-slate-300">
-                <thead className="bg-[#182232] text-xs font-semibold uppercase text-slate-400 border-b border-[#1e293b]">
+                <thead className="border-b border-[#1e293b] bg-[#182232] text-xs font-semibold uppercase text-slate-400">
                   <tr>
-                    <th className="px-6 py-4 text-center w-16">ลำดับ</th>
+                    <th className="w-16 px-6 py-4 text-center">ลำดับ</th>
                     <th className="px-6 py-4">ชื่อ</th>
                     <th className="px-6 py-4">นามสกุล</th>
                     <th className="px-6 py-4">Username / อีเมล</th>
-                    <th className="px-6 py-4 text-center w-40">จัดการ</th>
+                    <th className="w-40 px-6 py-4 text-center">จัดการ</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#1e293b]">
@@ -151,20 +162,20 @@ export default function UsersPage() {
                         {user.firstname}
                       </td>
                       <td className="px-6 py-4 text-slate-300">{user.lastname}</td>
-                      <td className="px-6 py-4 text-slate-400 font-mono text-xs">
+                      <td className="px-6 py-4 font-mono text-xs text-slate-400">
                         {user.username}
                       </td>
                       <td className="px-6 py-4 text-center">
                         <div className="flex items-center justify-center space-x-2">
                           <button
                             onClick={() => router.push(`/users/edit/${user.id}`)}
-                            className="rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 px-3 py-1.5 text-xs font-semibold transition-all hover:bg-amber-500 hover:text-slate-900"
+                            className="rounded-lg border border-amber-500/30 bg-amber-500/20 px-3 py-1.5 text-xs font-semibold text-amber-300 transition-all hover:bg-amber-500 hover:text-slate-900"
                           >
                             แก้ไข
                           </button>
                           <button
                             onClick={() => handleDelete(user.id)}
-                            className="rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 px-3 py-1.5 text-xs font-semibold transition-all hover:bg-red-600 hover:text-white"
+                            className="rounded-lg border border-red-500/30 bg-red-500/20 px-3 py-1.5 text-xs font-semibold text-red-300 transition-all hover:bg-red-600 hover:text-white"
                           >
                             ลบ
                           </button>
@@ -183,40 +194,39 @@ export default function UsersPage() {
                   key={user.id}
                   className="rounded-xl border border-[#1e293b] bg-[#121926] p-4 shadow-lg"
                 >
-                  <div className="flex items-start justify-between border-b border-[#1e293b] pb-3 mb-3">
-                    <span className="rounded-full bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-0.5 text-xs font-semibold text-indigo-400">
+                  <div className="mb-3 flex items-start justify-between border-b border-[#1e293b] pb-3">
+                    <span className="rounded-full border border-indigo-500/20 bg-indigo-500/10 px-2.5 py-0.5 text-xs font-semibold text-indigo-400">
                       #{index + 1}
                     </span>
-                    <span className="text-xs font-mono text-slate-500">
+                    <span className="font-mono text-xs text-slate-500">
                       ID: {user.id}
                     </span>
                   </div>
-                  
-                  <div className="space-y-1.5 mb-4">
+
+                  <div className="mb-4 space-y-1.5">
                     <p className="text-base font-semibold text-white">
                       {user.firstname} {user.lastname}
                     </p>
-                    <p className="text-xs text-slate-400 font-mono">
+                    <p className="font-mono text-xs text-slate-400">
                       {user.username}
                     </p>
                   </div>
 
-                  <div className="flex gap-2 pt-2 border-t border-[#1e293b]">
+                  <div className="flex gap-2 border-t border-[#1e293b] pt-2">
                     <button
                       onClick={() => router.push(`/users/edit/${user.id}`)}
-                      className="flex-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 py-2 text-center text-xs font-semibold transition-colors hover:bg-amber-500 hover:text-slate-900"
+                      className="flex-1 rounded-lg border border-amber-500/30 bg-amber-500/20 py-2 text-center text-xs font-semibold text-amber-300 transition-colors hover:bg-amber-500 hover:text-slate-900"
                     >
                       แก้ไข
                     </button>
                     <button
                       onClick={() => handleDelete(user.id)}
-                      className="flex-1 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 py-2 text-center text-xs font-semibold transition-colors hover:bg-red-600 hover:text-white"
+                      className="flex-1 rounded-lg border border-red-500/30 bg-red-500/20 py-2 text-center text-xs font-semibold text-red-300 transition-colors hover:bg-red-600 hover:text-white"
                     >
                       ลบ
                     </button>
                   </div>
                 </div>
-
               ))}
             </div>
           </>

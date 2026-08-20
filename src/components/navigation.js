@@ -1,14 +1,23 @@
 'use client'
 
+// 1 & 2. นำเข้า useState และ useEffect จาก React
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import LoginModal from './LoginModal'
-import { register } from 'next/dist/next-devtools/userspace/pages/pages-dev-overlay-setup'
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+
+  // 3. กำหนด state สำหรับเก็บ token
+  const [token, setToken] = useState(null)
+
+  // 4. ใช้ useEffect ดึง token จาก localStorage
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token")
+    setToken(storedToken)
+  }, [])
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,7 +30,14 @@ export default function Navigation() {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
- 
+
+  // 5. สร้างฟังก์ชัน handleLogout
+  const handleLogout = () => {
+    localStorage.removeItem("token") // ลบ token
+    setToken(null) // อัปเดต state
+    window.location.href = "/" // รีไดเรกต์กลับไปหน้าแรก
+  }
+
   const menuItems = [
     { name: 'หน้าแรก', href: '/' },
     { name: 'เกี่ยวกับเรา', href: '/about' },
@@ -29,7 +45,6 @@ export default function Navigation() {
     { name: 'ติดต่อเรา', href: '/contact' },
   ]
 
-  // 🛠️ กำหนดตัวแปรสำหรับควบคุมสีข้อความ เพื่อไม่ให้โค้ดยาวเกินไป
   const textColor = isScrolled ? 'text-gray-900' : 'text-white'
   const hoverBgColor = isScrolled ? 'hover:bg-gray-100' : 'hover:bg-white/20'
 
@@ -44,7 +59,7 @@ export default function Navigation() {
       >
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
-           
+            
             {/* Logo Section */}
             <Link
               href="/"
@@ -55,7 +70,6 @@ export default function Navigation() {
               </div>
 
               <div className="flex flex-col">
-                {/* 🛠️ เปลี่ยนสีข้อความโลโก้ตาม isScrolled */}
                 <h1 className={`text-xl font-extrabold tracking-tight transition-colors duration-300 ${textColor}`}>
                   I Bas Shop
                 </h1>
@@ -65,17 +79,15 @@ export default function Navigation() {
               </div>
             </Link>
 
-            {/* Right Section: Menu, Cart, Login, Mobile Toggle */}
+            {/* Right Section: Menu, Cart, Auth Buttons, Mobile Toggle */}
             <div className="flex items-center gap-2 md:gap-4">
-             
+              
               {/* Desktop Menu Items */}
-              <div className="hidden md:flex items-center gap-1 mr-4">
+              <div className="hidden md:flex items-center gap-1 mr-2">
                 {menuItems.map((item) => (
-                  <Link 
-
+                  <Link
                     key={item.name}
                     href={item.href}
-                    // 🛠️ เปลี่ยนสีข้อความเมนู และเอฟเฟกต์ตอน hover
                     className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${textColor} ${hoverBgColor}`}
                   >
                     {item.name}
@@ -86,7 +98,6 @@ export default function Navigation() {
               {/* Cart Button */}
               <Link
                 href="/cart"
-                // 🛠️ เปลี่ยนสีไอคอนตะกร้า และเอฟเฟกต์ตอน hover
                 className={`relative p-2.5 rounded-full transition-all duration-300 ${textColor} ${hoverBgColor}`}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
@@ -97,23 +108,40 @@ export default function Navigation() {
                 </span>
               </Link>
 
-              {/* Login Button (Desktop) */}
-              <div className="hidden md:block">
-                <button
-                  onClick={() => setIsLoginModalOpen(true)}
-                  className={`inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-medium transition-all duration-300 ${
-                  isScrolled
-                  ? 'bg-gray-900 text-white hover:bg-gray-800 shadow-md'
-                  : 'bg-white text-gray-900 hover:bg-gray-100 shadow-sm'
-               }`}
-             >
-            เข้าสู่ระบบ
-              </button> 
-            </div>
+              {/* 6. แก้ไขเมนูแสดงปุ่ม Logout / Register & Login (Desktop) */}
+              <div className="hidden md:flex items-center gap-2">
+                {token ? (
+                  <button
+                    onClick={handleLogout}
+                    className="inline-flex items-center justify-center rounded-full bg-red-600 px-5 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-red-700 shadow-md"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <>
+                    <Link
+                      href="/register"
+                      className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${textColor} ${hoverBgColor}`}
+                    >
+                      สมัครสมาชิก
+                    </Link>
+                    <button
+                      onClick={() => setIsLoginModalOpen(true)}
+                      className={`inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
+                        isScrolled
+                          ? 'bg-gray-900 text-white hover:bg-gray-800 shadow-md'
+                          : 'bg-white text-gray-900 hover:bg-gray-100 shadow-sm'
+                      }`}
+                    >
+                      Login
+                    </button>
+                  </>
+                )}
+              </div>
+
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                // 🛠️ เปลี่ยนสีไอคอนแฮมเบอร์เกอร์บนมือถือ
                 className={`md:hidden rounded-full p-2.5 transition-all duration-300 ${textColor} ${hoverBgColor}`}
               >
                 <div className="space-y-1.5">
@@ -125,7 +153,7 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Mobile Menu Dropdown (ยังคงเป็นสีขาวเหมือนเดิมเพื่อให้อ่านง่ายบนมือถือ) */}
+          {/* Mobile Menu Dropdown */}
           <div
             className={`md:hidden transition-all duration-300 ease-in-out origin-top ${
               isOpen ? 'opacity-100 scale-y-100 mb-4' : 'opacity-0 scale-y-0 h-0'
@@ -142,18 +170,40 @@ export default function Navigation() {
                   {item.name}
                 </Link>
               ))}
-             
+              
               <div className="h-px bg-gray-100 my-2 w-full"></div>
-             
-              <button
-                onClick={() => {
-                  setIsOpen(false)
-                  setIsLoginModalOpen(true)
-                }}
-                className="mt-1 w-full rounded-xl bg-gray-900 px-4 py-3 text-center text-sm font-medium text-white shadow-md transition-all hover:bg-gray-800"
-              >
-                เข้าสู่ระบบ
-              </button>
+              
+              {/* 6. แก้ไขเมนูแสดงปุ่ม Logout / Register & Login (Mobile) */}
+              {token ? (
+                <button
+                  onClick={() => {
+                    setIsOpen(false)
+                    handleLogout()
+                  }}
+                  className="mt-1 w-full rounded-xl bg-red-600 px-4 py-3 text-center text-sm font-medium text-white shadow-md transition-all hover:bg-red-700"
+                >
+                  Logout
+                </button>
+              ) : (
+                <div className="flex flex-col gap-2 mt-1">
+                  <Link
+                    href="/register"
+                    onClick={() => setIsOpen(false)}
+                    className="w-full rounded-xl border border-gray-200 px-4 py-3 text-center text-sm font-medium text-gray-700 transition-all hover:bg-gray-50"
+                  >
+                    สมัครสมาชิก
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsOpen(false)
+                      setIsLoginModalOpen(true)
+                    }}
+                    className="w-full rounded-xl bg-gray-900 px-4 py-3 text-center text-sm font-medium text-white shadow-md transition-all hover:bg-gray-800"
+                  >
+                    Login
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -162,7 +212,7 @@ export default function Navigation() {
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
-        ></LoginModal>
+      />
     </>
   )
 }
