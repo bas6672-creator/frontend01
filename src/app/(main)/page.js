@@ -10,7 +10,8 @@ export default function Home() {
     <div className="min-h-screen bg-[#0d071e] text-white selection:bg-indigo-500 selection:text-white">
       
       {/* ==================== HERO SECTION ==================== */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#1c134c] via-[#150d3b] to-[#120a27] pt-12 pb-20 px-4 sm:px-6 lg:px-8">
+      {/* แก้ไขโดยการเพิ่ม pt-28 (หน้าจอปกติ) และ md:pt-36 (หน้าจอกว้าง) เพื่อดันเนื้อหาลงมาจาก Navbar */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#1c134c] via-[#150d3b] to-[#120a27] pt-28 md:pt-36 pb-20 px-4 sm:px-6 lg:px-8">
         
         {/* Background Glow Deco */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-indigo-600/20 blur-[120px] rounded-full pointer-events-none" />
@@ -21,7 +22,6 @@ export default function Home() {
           {/* Hero Left Content */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md text-xs sm:text-sm font-medium text-indigo-200">
-
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight">

@@ -30,21 +30,22 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#1c134c] via-[#140c38] to-[#0a0518] text-white">
+    <div className="min-h-screen bg-[#0d131d] text-slate-200">
       
       {/* ==================== HERO SECTION ==================== */}
-      <section className="relative px-4 sm:px-6 lg:px-8 pt-16 pb-20 max-w-7xl mx-auto">
+      {/* ปรับ pt-28 md:pt-36 เพื่อหลบ Navbar และเปลี่ยนสีพื้นหลังเป็นโทนกรมท่าเข้ม */}
+      <section className="relative px-4 sm:px-6 lg:px-8 pt-28 md:pt-36 pb-20 max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto space-y-6">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-sm font-medium">
-            
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-sm font-medium">
+            เกี่ยวกับเรา
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight text-white">
             จุดเริ่มต้นของ <br />
             <span className="text-amber-400">I Bas Shop</span> ร้านขายไอดีอันดับ 1
           </h1>
 
-          <p className="text-base sm:text-lg text-slate-300 leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-400 leading-relaxed">
             เราคือศูนย์รวมบริการซื้อขายไอดีเกมออนไลน์ครบวงจร ก่อตั้งขึ้นโดยกลุ่มเกมเมอร์ที่เข้าใจความต้องการของนักเล่นเกมอย่างแท้จริง เพื่อส่งมอบไอดีคุณภาพดี ราคาคุ้มค่า และปลอดภัยที่สุด
           </p>
         </div>
@@ -54,7 +55,7 @@ export default function AboutPage() {
           {stats.map((stat) => (
             <div
               key={stat.id}
-              className="bg-[#1e153b]/80 border border-indigo-500/20 rounded-2xl p-6 text-center backdrop-blur-md shadow-xl hover:border-indigo-500/40 transition-all"
+              className="bg-[#121926] border border-[#1e293b] rounded-2xl p-6 text-center shadow-xl hover:border-indigo-500/40 transition-all"
             >
               <div className="text-3xl sm:text-4xl font-black text-amber-400 mb-1">
                 {stat.value}
@@ -82,12 +83,12 @@ export default function AboutPage() {
           {highlights.map((item, idx) => (
             <div
               key={idx}
-              className="bg-[#1e153b]/90 border border-indigo-500/20 hover:border-indigo-500/50 rounded-3xl p-8 backdrop-blur-xl shadow-xl hover:shadow-indigo-500/10 transition-all group"
+              className="bg-[#121926] border border-[#1e293b] hover:border-indigo-500/40 rounded-3xl p-8 shadow-xl transition-all group"
             >
-              <div className="w-14 h-14 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform">
                 {item.icon}
               </div>
-              <h3 className="text-xl font-bold mb-3 group-hover:text-amber-400 transition-colors">
+              <h3 className="text-xl font-bold text-white mb-3 group-hover:text-amber-400 transition-colors">
                 {item.title}
               </h3>
               <p className="text-slate-400 text-sm leading-relaxed">
@@ -100,12 +101,12 @@ export default function AboutPage() {
 
       {/* ==================== CTA SECTION ==================== */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">
-        <div className="bg-gradient-to-r from-indigo-900/80 to-purple-900/80 border border-indigo-500/30 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden backdrop-blur-xl shadow-2xl">
+        <div className="bg-[#121926] border border-[#1e293b] rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
           <div className="relative z-10 max-w-2xl mx-auto space-y-4">
             <h3 className="text-2xl sm:text-3xl font-black text-white">
               อยากได้ไอดีเกมเทพๆ ปลอดภัย?
             </h3>
-            <p className="text-slate-300 text-sm sm:text-base">
+            <p className="text-slate-400 text-sm sm:text-base">
               เลือกซื้อไอดีเกมยอดฮิต คุณภาพสูง ปลอดภัย ไม่โดนดึงคืนแน่นอนที่ I Bas Shop
             </p>
             <div className="pt-4 flex flex-wrap justify-center gap-4">
@@ -117,7 +118,7 @@ export default function AboutPage() {
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-3.5 bg-transparent border border-white/30 hover:bg-white/10 text-white font-bold rounded-xl transition-all"
+                className="px-8 py-3.5 bg-slate-800/80 border border-slate-700 hover:bg-slate-700 text-white font-bold rounded-xl transition-all"
               >
                 สอบถามเพิ่มเติม
               </Link>
