@@ -8,14 +8,12 @@ const API_URL = "https://api.itdev.cmtc.ac.th/users";
 
 export default function UsersPage() {
   const router = useRouter();
-  
-  // 1. กำหนด state เช็ค login ไว้ภายใน Component
+
   const [isAuth, setIsAuth] = useState(false);
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
 
-  // 2. แก้ไข useEffect เช็ค token และดึงข้อมูล (ลบ useEffect ตัวซ้ำออก)
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -23,14 +21,21 @@ export default function UsersPage() {
       return;
     }
     setIsAuth(true);
-    fetchUsers();
-  }, []);
+    fetchUsers(token);
+  }, [router]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (token) => {
     setIsLoading(true);
     setIsError(false);
     try {
-      const response = await fetch(API_URL);
+      const authToken = token || localStorage.getItem("token");
+      const response = await fetch(API_URL, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+
       if (!response.ok) throw new Error(`Status ${response.status}`);
       const data = await response.json();
       setUsers(data);
@@ -39,7 +44,7 @@ export default function UsersPage() {
       await Swal.fire({
         icon: "error",
         title: "เกิดข้อผิดพลาด",
-        text: "ไม่สามารถโหลดข้อมูลได้",
+        text: "ไม่สามารถโหลดข้อมูลผู้ใช้งานได้",
         background: "#121926",
         color: "#fff",
       });
@@ -67,8 +72,12 @@ export default function UsersPage() {
 
     if (result.isConfirmed) {
       try {
+        const token = localStorage.getItem("token");
         const response = await fetch(`${API_URL}/${id}`, {
           method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (response.ok) {
@@ -97,7 +106,13 @@ export default function UsersPage() {
     }
   };
 
-  // 3. เช็คค่า login (ถ้ายังไม่ยืนยันตัวตนจะไม่แสดง UI ใดๆ ป้องกัน UI กระพริบก่อน Redirect)
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.dispatchEvent(new Event("auth-change"));
+    router.push("/login");
+  };
+
   if (!isAuth) return null;
 
   if (isLoading) {
@@ -129,6 +144,12 @@ export default function UsersPage() {
               จัดการสมาชิกทั้งหมดในระบบ ({users.length} คน)
             </p>
           </div>
+          <button
+            onClick={handleLogout}
+            className="self-start rounded-lg border border-red-500/30 bg-red-500/20 px-4 py-2 text-xs font-semibold text-red-300 transition-colors hover:bg-red-600 hover:text-white sm:self-auto"
+          >
+            ออกจากระบบ
+          </button>
         </div>
 
         {users.length === 0 ? (
