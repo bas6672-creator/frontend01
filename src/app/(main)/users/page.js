@@ -106,13 +106,6 @@ export default function UsersPage() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    window.dispatchEvent(new Event("auth-change"));
-    router.push("/login");
-  };
-
   if (!isAuth) return null;
 
   if (isLoading) {
@@ -137,19 +130,12 @@ export default function UsersPage() {
   return (
     <div className="min-h-screen bg-[#0d131d] px-4 pb-8 pt-24 text-slate-200 md:px-8 md:pt-28">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">รายชื่อสมาชิก</h1>
-            <p className="text-sm text-slate-400">
-              จัดการสมาชิกทั้งหมดในระบบ ({users.length} คน)
-            </p>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="self-start rounded-lg border border-red-500/30 bg-red-500/20 px-4 py-2 text-xs font-semibold text-red-300 transition-colors hover:bg-red-600 hover:text-white sm:self-auto"
-          >
-            ออกจากระบบ
-          </button>
+        {/* Header Section */}
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-white">รายชื่อสมาชิก</h1>
+          <p className="text-sm text-slate-400">
+            จัดการสมาชิกทั้งหมดในระบบ ({users.length} คน)
+          </p>
         </div>
 
         {users.length === 0 ? (

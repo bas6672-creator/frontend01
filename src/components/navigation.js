@@ -1,218 +1,187 @@
-'use client'
+"use client";
 
-// 1 & 2. นำเข้า useState และ useEffect จาก React
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
-import LoginModal from './LoginModal'
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Navigation() {
-  const [isOpen, setIsOpen] = useState(false)
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
-  const [isScrolled, setIsScrolled] = useState(false)
+  const router = useRouter();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // 3. กำหนด state สำหรับเก็บ token
-  const [token, setToken] = useState(null)
-
-  // 4. ใช้ useEffect ดึง token จาก localStorage
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token")
-    setToken(storedToken)
-  }, [])
+  // ฟังก์ชันเช็คสถานะ Login จาก Token
+  const checkAuth = () => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  };
 
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
-      }
-    }
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+    checkAuth();
 
-  // 5. สร้างฟังก์ชัน handleLogout
+    // ดักจับ Custom Event เมื่อมีการ Login หรือ Logout
+    window.addEventListener("auth-change", checkAuth);
+    return () => {
+      window.removeEventListener("auth-change", checkAuth);
+    };
+  }, []);
+
+  // ฟังก์ชัน Logout
   const handleLogout = () => {
-    localStorage.removeItem("token") // ลบ token
-    setToken(null) // อัปเดต state
-    window.location.href = "/" // รีไดเรกต์กลับไปหน้าแรก
-  }
-
-  const menuItems = [
-    { name: 'หน้าแรก', href: '/' },
-    { name: 'เกี่ยวกับเรา', href: '/about' },
-    { name: 'บริการของเรา', href: '/service' },
-    { name: 'ติดต่อเรา', href: '/contact' },
-  ]
-
-  const textColor = isScrolled ? 'text-gray-900' : 'text-white'
-  const hoverBgColor = isScrolled ? 'hover:bg-gray-100' : 'hover:bg-white/20'
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setIsLoggedIn(false);
+    window.dispatchEvent(new Event("auth-change"));
+    router.push("/login");
+  };
 
   return (
-    <>
-      <nav
-        className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-          isScrolled
-            ? 'bg-white/80 backdrop-blur-lg border-gray-100 shadow-md py-0'
-            : 'bg-transparent py-2'
-        }`}
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-20 items-center justify-between">
-            
-            {/* Logo Section */}
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0b0f19]/80 backdrop-blur-md border-b border-slate-800">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 text-slate-300">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 font-bold text-white shadow-lg shadow-blue-500/30">
+            BAS
+          </div>
+          <div>
+            <span className="text-lg font-bold text-white block leading-tight">
+              I Bas Shop
+            </span>
+            <span className="text-xs text-slate-400">ขายไอดีราคากับมิตรภาพ</span>
+          </div>
+        </Link>
+
+        {/* Desktop Menu & Auth Button */}
+        <div className="hidden md:flex items-center gap-6">
+          <Link href="/" className="hover:text-white transition-colors">
+            หน้าแรก
+          </Link>
+          <Link href="/about" className="hover:text-white transition-colors">
+            เกี่ยวกับเรา
+          </Link>
+          <Link href="/service" className="hover:text-white transition-colors">
+            บริการของเรา
+          </Link>
+          <Link href="/contact" className="hover:text-white transition-colors">
+            ติดต่อเรา
+          </Link>
+          <Link href="/register" className="hover:text-white transition-colors">
+            สมัครสมาชิก
+          </Link>
+
+          {/* สลับปุ่ม Login / ออกจากระบบ */}
+          {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="rounded-full bg-red-600/20 px-5 py-2 text-sm font-semibold text-red-400 border border-red-500/30 hover:bg-red-600 hover:text-white transition-all duration-200"
+            >
+              ออกจากระบบ
+            </button>
+          ) : (
+            <Link
+              href="/login"
+              className="rounded-full bg-white px-6 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-200 transition-all duration-200"
+            >
+              Login
+            </Link>
+          )}
+        </div>
+
+        {/* Mobile Hamburger Button */}
+        <div className="flex md:hidden">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="text-slate-300 hover:text-white focus:outline-none"
+          >
+            <svg
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              {isOpen ? (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
+              )}
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      {isOpen && (
+        <div className="md:hidden border-b border-slate-800 bg-[#0d131d] px-6 pb-6 pt-2">
+          <div className="flex flex-col gap-3">
             <Link
               href="/"
-              className="flex items-center gap-3 group"
+              onClick={() => setIsOpen(false)}
+              className="py-2 text-slate-300 hover:text-white"
             >
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 text-white font-bold text-lg shadow-lg shadow-indigo-500/30 transition-transform group-hover:scale-105">
-                BAS
-              </div>
-
-              <div className="flex flex-col">
-                <h1 className={`text-xl font-extrabold tracking-tight transition-colors duration-300 ${textColor}`}>
-                  I Bas Shop
-                </h1>
-                <p className={`text-[11px] font-medium uppercase tracking-wider transition-colors duration-300 ${isScrolled ? 'text-gray-500' : 'text-gray-300'}`}>
-                  ขายไอดีราคาถูก
-                </p>
-              </div>
+              หน้าแรก
+            </Link>
+            <Link
+              href="/about"
+              onClick={() => setIsOpen(false)}
+              className="py-2 text-slate-300 hover:text-white"
+            >
+              เกี่ยวกับเรา
+            </Link>
+            <Link
+              href="/service"
+              onClick={() => setIsOpen(false)}
+              className="py-2 text-slate-300 hover:text-white"
+            >
+              บริการของเรา
+            </Link>
+            <Link
+              href="/contact"
+              onClick={() => setIsOpen(false)}
+              className="py-2 text-slate-300 hover:text-white"
+            >
+              ติดต่อเรา
+            </Link>
+            <Link
+              href="/register"
+              onClick={() => setIsOpen(false)}
+              className="py-2 text-slate-300 hover:text-white"
+            >
+              สมัครสมาชิก
             </Link>
 
-            {/* Right Section: Menu, Cart, Auth Buttons, Mobile Toggle */}
-            <div className="flex items-center gap-2 md:gap-4">
-              
-              {/* Desktop Menu Items */}
-              <div className="hidden md:flex items-center gap-1 mr-2">
-                {menuItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${textColor} ${hoverBgColor}`}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
+            <div className="my-2 h-px bg-slate-800 w-full"></div>
 
-              {/* Cart Button */}
-              <Link
-                href="/cart"
-                className={`relative p-2.5 rounded-full transition-all duration-300 ${textColor} ${hoverBgColor}`}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
-                </svg>
-                <span className="absolute top-1.5 right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white ring-2 ring-white shadow-sm">
-                  3
-                </span>
-              </Link>
-
-              {/* 6. แก้ไขเมนูแสดงปุ่ม Logout / Register & Login (Desktop) */}
-              <div className="hidden md:flex items-center gap-2">
-                {token ? (
-                  <button
-                    onClick={handleLogout}
-                    className="inline-flex items-center justify-center rounded-full bg-red-600 px-5 py-2 text-sm font-medium text-white transition-all duration-300 hover:bg-red-700 shadow-md"
-                  >
-                    Logout
-                  </button>
-                ) : (
-                  <>
-                    <Link
-                      href="/register"
-                      className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-300 ${textColor} ${hoverBgColor}`}
-                    >
-                      สมัครสมาชิก
-                    </Link>
-                    <button
-                      onClick={() => setIsLoginModalOpen(true)}
-                      className={`inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
-                        isScrolled
-                          ? 'bg-gray-900 text-white hover:bg-gray-800 shadow-md'
-                          : 'bg-white text-gray-900 hover:bg-gray-100 shadow-sm'
-                      }`}
-                    >
-                      Login
-                    </button>
-                  </>
-                )}
-              </div>
-
-              {/* Mobile Menu Button */}
+            {isLoggedIn ? (
               <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={`md:hidden rounded-full p-2.5 transition-all duration-300 ${textColor} ${hoverBgColor}`}
+                onClick={() => {
+                  setIsOpen(false);
+                  handleLogout();
+                }}
+                className="w-full text-center rounded-xl bg-red-600/20 py-3 text-sm font-semibold text-red-400 border border-red-500/30 hover:bg-red-600 hover:text-white transition-all"
               >
-                <div className="space-y-1.5">
-                  <span className={`block h-0.5 w-5 bg-current transition-all duration-300 ${isOpen ? 'translate-y-2 rotate-45' : ''}`} />
-                  <span className={`block h-0.5 w-5 bg-current transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`} />
-                  <span className={`block h-0.5 w-5 bg-current transition-all duration-300 ${isOpen ? '-translate-y-2 -rotate-45' : ''}`} />
-                </div>
+                ออกจากระบบ
               </button>
-            </div>
-          </div>
-
-          {/* Mobile Menu Dropdown */}
-          <div
-            className={`md:hidden transition-all duration-300 ease-in-out origin-top ${
-              isOpen ? 'opacity-100 scale-y-100 mb-4' : 'opacity-0 scale-y-0 h-0'
-            }`}
-          >
-            <div className="flex flex-col gap-1 p-4 bg-white border border-gray-100 rounded-2xl shadow-xl shadow-gray-200/50">
-              {menuItems.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  onClick={() => setIsOpen(false)}
-                  className="px-4 py-3 text-sm font-medium text-gray-600 rounded-xl transition-all duration-200 hover:bg-gray-50 hover:text-indigo-600"
-                >
-                  {item.name}
-                </Link>
-              ))}
-              
-              <div className="h-px bg-gray-100 my-2 w-full"></div>
-              
-              {/* 6. แก้ไขเมนูแสดงปุ่ม Logout / Register & Login (Mobile) */}
-              {token ? (
-                <button
-                  onClick={() => {
-                    setIsOpen(false)
-                    handleLogout()
-                  }}
-                  className="mt-1 w-full rounded-xl bg-red-600 px-4 py-3 text-center text-sm font-medium text-white shadow-md transition-all hover:bg-red-700"
-                >
-                  Logout
-                </button>
-              ) : (
-                <div className="flex flex-col gap-2 mt-1">
-                  <Link
-                    href="/register"
-                    onClick={() => setIsOpen(false)}
-                    className="w-full rounded-xl border border-gray-200 px-4 py-3 text-center text-sm font-medium text-gray-700 transition-all hover:bg-gray-50"
-                  >
-                    สมัครสมาชิก
-                  </Link>
-                  <button
-                    onClick={() => {
-                      setIsOpen(false)
-                      setIsLoginModalOpen(true)
-                    }}
-                    className="w-full rounded-xl bg-gray-900 px-4 py-3 text-center text-sm font-medium text-white shadow-md transition-all hover:bg-gray-800"
-                  >
-                    Login
-                  </button>
-                </div>
-              )}
-            </div>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setIsOpen(false)}
+                className="block text-center rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white hover:bg-blue-700 transition-all"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
-      </nav>
-
-      <LoginModal
-        isOpen={isLoginModalOpen}
-        onClose={() => setIsLoginModalOpen(false)}
-      />
-    </>
-  )
+      )}
+    </nav>
+  );
 }
