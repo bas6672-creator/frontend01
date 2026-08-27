@@ -8,6 +8,21 @@ export default function Navigation() {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // เช็คสถานะการเลื่อนหน้าจอ (Scroll)
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // ฟังก์ชันเช็คสถานะ Login จาก Token
   const checkAuth = () => {
@@ -35,7 +50,13 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0b0f19]/80 backdrop-blur-md border-b border-slate-800">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
+        isScrolled
+          ? "bg-[#0b0f19]/40 backdrop-blur-xl border-slate-800/60 shadow-lg shadow-black/20"
+          : "bg-[#0b0f19]/90 backdrop-blur-md border-slate-800"
+      }`}
+    >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 text-slate-300">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
@@ -120,7 +141,7 @@ export default function Navigation() {
 
       {/* Mobile Menu Dropdown */}
       {isOpen && (
-        <div className="md:hidden border-b border-slate-800 bg-[#0d131d] px-6 pb-6 pt-2">
+        <div className="md:hidden border-b border-slate-800 bg-[#0d131d]/95 backdrop-blur-xl px-6 pb-6 pt-2">
           <div className="flex flex-col gap-3">
             <Link
               href="/"
